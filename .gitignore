@@ -1,0 +1,5 @@
+*.pyc
+config.py
+out/
+search_index/
+venv/

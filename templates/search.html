@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+{% block body %}
+<h1>Search directory: {{ config.MARKDOWN_FILES_DIR }}</h1>
+<a href="{{ url_for('update_index')}}">update index</a>
+<form action="{{ url_for('search') }}" name="search">
+    <input type="text" name="query" value="{{ query }}">
+    <input type="submit" value="search">
+    {% if config['USE_TAGS'] %}
+        <span class="label">only tags</span>
+        {% if fields == "tags" %}
+            <input type="checkbox" checked name="fields" value="tags"/>{% else %}<input type="checkbox" name="fields" value="tags"/>
+        {%endif%}
+        <span class="label">only file names</span>
+        {% if fields == "filename" %}
+            <input type="checkbox" checked name="fields" value="filename"/>{% else %}<input type="checkbox" name="fields" value="filename"/>
+        {%endif%}
+    {%endif%}
+    <a href="{{ url_for('search')}}?query=&fields=">[clear]</a>
+</form>
+<table cellspacing="3">
+    {% if tag_cloud and config['USE_TAGS'] %}
+    <tr>
+        <td class="tag-cloud">Related tags:&nbsp
+            {% for t in tag_cloud%}
+                <a href="{{url_for('search')}}?query={{t}}&fields=tags">{{t}}</a>
+            {% endfor %}
+        </td>
+    </tr>
+    {% endif %}
+    {% if config['SHOW_PARSED_QUERY']%}
+    <tr>
+        <td class="info">Parsed query: {{ parsed_query }}</td>
+    </tr>
+    {% endif %}
+    <tr>
+        <td class="info">FOUND {{ entries | length }} results</td>
+    </tr>
+
+    {% for e in entries %}
+    <tr>
+        <td class="search-result">
+            {% if config['USE_TAGS'] %}
+            <div class="tags">
+                {% for tag in e.tags.split()%}
+                <a href="{{url_for('search')}}?query={{tag}}&fields=tags">{{tag}}</a>
+                {% endfor%}
+            </div>
+            {% endif%}
+            <div class="path"><a href='{{ url_for("open")}}?path={{e.path|urlencode}}&query={{query}}&fields={{fields}}'>{{e.path}}</a>score: {{'%d'  % e.score}}</div>
+            <div class="markdown-body">{{ e.content_highlight|safe}}</div>
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

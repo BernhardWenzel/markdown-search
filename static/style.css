@@ -1,0 +1,127 @@
+body {
+    font-family: sans-serif;
+}
+
+a, h1, h2 {
+    color: #377BA8;
+}
+
+h1, h2 {
+    font-family: 'Georgia', serif;
+    margin: 0;
+}
+
+h1 {
+    border-bottom: 1px solid #eee;
+    font-size: 22px;
+    margin-bottom: 2px;
+}
+
+h2 {
+    font-size: 1.2em;
+}
+
+input[type="text"] {
+    width: 50%;
+    font-size: 18px;
+}
+
+input[type="submit"] {
+    font-size: 18px;
+    margin-left: 0px;
+    margin-right: 6px;
+    background-color: #3783B7;
+    border: 1px gray solid;
+    color: white;
+    font-weight: normal;
+    font-family: Arial;
+    padding-bottom: 1px;
+}
+
+.flash {
+    background: #F3F3A6;
+    padding: 0.5em;
+    border: 1px solid #dfe2c1;
+}
+
+.error {
+    background: #F0D6D6;
+    padding: 0.5em;
+}
+
+table {
+    table-layout: fixed;
+    width: 100%;
+    word-break: break-all;
+    overflow: hidden;
+}
+
+td.info {
+    color: gray;
+    font-size: 12px;
+    font-family: Arial, serif;
+}
+
+div.tags a, td.tag-cloud a {
+    color: #b56020;
+    font-size: 12px;
+    /* font-weight: bold; */
+}
+
+td.tag-cloud {
+    font-size: 12px;
+    color: #555555;
+}
+
+div.path {
+    font-size: 12px;
+    color: #666666;
+    margin-bottom: 3px;
+}
+
+div.path a {
+    font-size: 12px;
+    margin-right: 5px;
+}
+
+span.label {
+    font-size: 14px;
+    color: #565656;
+    font-family: arial;
+}
+
+div.content {
+    white-space: pre;
+    word-wrap: break-word;
+    font-size: 13px;
+    font-family: Arial, serif;
+    border: 1px #e5e5e5 solid;
+    background-color: #ffffff;
+    padding: 4px;
+}
+
+td.search-result {
+    background: #D7D9FB;
+    padding: 1px 4px 6px 4px;
+}
+
+b.term0 {
+    background-color: #fdff01;
+    padding: 3px;
+}
+b.term1 {
+    background-color: #feff94;
+    padding: 2px;
+}
+b.term2 {
+    background-color: #f7ffda;
+    padding: 1px;
+}
+b.term3 {
+    background-color: #faffe5;
+    padding: 1px;
+}
+b.term4 {
+    background-color: #faffdd;
+    padding: 1px;
+}

@@ -1,0 +1,32 @@
+<html><body><table border=1 style='table-layout: fixed; width:800px;word-break:break-all;overflow:hidden;'><tr><td style='width:25%'></td><td style='width:75%'></td></tr><tr><td colspan=2>Query: ['psql']</td></tr><tr><td colspan=2>FOUND 1 results</td></tr><tr><td style='width: 200px;max-width:200px; min-width:200px;'><a href='file://Volumes/data/doc/wiki/dev/database/postgresql/psql.markdown'>/database/postgresql/psql.markdown</a><br>score:100</td><td style='white-space: pre;word-wrap:break-word;width:600px;'><span style='background-color:yellow'>#  psql</span><hr/># psql
+Created Friday 29 November 2013
+
+## dumpall and restore
+
+Eg when upgrading between versions (9.3 to 9.4)
+
+With 9.3
+
+	pg_dumpall -f pgdump.sql
+
+With 9.4
+
+	psql -f pgdump.sql postgres
+
+Drop
+----
+``psql -U postgres -c "drop database grokland_api_uat"``
+
+
+## Connecting to remote db
+
+	psql -h horton.elephantsql.com -p 5432 -U <USER> <DBNAME>
+	eg.
+	psql -h horton.elephantsql.com -p 5432 -U ipaageqd ipaageqd
+	
+## create db
+
+	created DB_NAME
+	psql -f conf/db/schema.sql -d zerounatest -U zerouna
+
+	</td></tr></table></body></html>
