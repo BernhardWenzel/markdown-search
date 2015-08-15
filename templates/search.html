@@ -1,19 +1,19 @@
 {% extends "layout.html" %}
 {% block body %}
-<h1>Search directory: {{ config.MARKDOWN_FILES_DIR }}</h1>
+<h1><a href="{{ url_for('search')}}?query=&fields=">Search directory: {{ config.MARKDOWN_FILES_DIR }}</a></h1>
 <a href="{{ url_for('update_index')}}">update index</a>
 <form action="{{ url_for('search') }}" name="search">
     <input type="text" name="query" value="{{ query }}">
     <input type="submit" value="search">
     {% if config['USE_TAGS'] %}
-        <span class="label">only tags</span>
         {% if fields == "tags" %}
             <input type="checkbox" checked name="fields" value="tags"/>{% else %}<input type="checkbox" name="fields" value="tags"/>
         {%endif%}
-        <span class="label">only file names</span>
+        <span class="label">only tags</span>
         {% if fields == "filename" %}
             <input type="checkbox" checked name="fields" value="filename"/>{% else %}<input type="checkbox" name="fields" value="filename"/>
         {%endif%}
+        <span class="label">only file names</span>
     {%endif%}
     <a href="{{ url_for('search')}}?query=&fields=">[clear]</a>
 </form>
@@ -46,10 +46,15 @@
                 {% endfor%}
             </div>
             {% endif%}
-            <div class="path"><a href='{{ url_for("open")}}?path={{e.path|urlencode}}&query={{query}}&fields={{fields}}'>{{e.path}}</a>score: {{'%d'  % e.score}}</div>
+            <div class="path"><a href='{{ url_for("open_file")}}?path={{e.path|urlencode}}&query={{query}}&fields={{fields}}'>{{e.path}}</a>score: {{'%d'  % e.score}}</div>
             <div class="markdown-body">{{ e.content_highlight|safe}}</div>
         </td>
     </tr>
     {% endfor %}
 </table>
+<div class="last-searches">Last searches: <br/>
+    {% for s in last_searches %}
+        <span><a href="{{url_for('search')}}?{{s}}">{{s}}</a></span>
+    {% endfor %}
+</div>
 {% endblock %}

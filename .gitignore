@@ -3,3 +3,6 @@ config.py
 out/
 search_index/
 venv/
+*.iml
+.idea
+last_searches.txt

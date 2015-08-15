@@ -4,29 +4,36 @@ import re
 # http://mistune.readthedocs.org/en/latest/
 
 class ParsingRenderer(mistune.Renderer):
-    blocks = []
-    headlines = ""
-
     def __init__(self, **kwargs):
         super(ParsingRenderer, self).__init__(**kwargs)
+        self.blocks = []
+        self.headlines = u''
+        self.doubleemphasiswords=u''
+        self.emphasiswords=u''
 
     def block_code(self, code, lang):
         self.blocks.append(code)
         return super(ParsingRenderer, self).block_code(code, lang)
 
     def header(self, text, level, raw=None):
-        if level == 1:
-            self.headlines += "%s " % raw.lower()
+        self.headlines += "%s " % raw.lower()
         return super(ParsingRenderer, self).header(text, level, raw)
 
+    def double_emphasis(self, text):
+        self.doubleemphasiswords += "%s " % text.lower()
+        return super(ParsingRenderer, self).double_emphasis(text)
+
+    def emphasis(self, text):
+        self.emphasiswords += "%s " % text.lower()
+        return super(ParsingRenderer, self).emphasis(text)
 
 class MarkdownParser:
-    blocks = []
-    headlines = u''
-    tags = u''
-
     def __init__(self):
-        pass
+        self.blocks = []
+        self.headlines = u''
+        self.tags = u''
+        self.doubleemphasiswords=u''
+        self.emphasiswords=u''
 
     def parse(self, markdown_text, tags_prefix='', tags_regex='[^a-zA-Z\d\s]+'):
         renderer = ParsingRenderer()

@@ -56,10 +56,14 @@ table {
     overflow: hidden;
 }
 
-td.info {
+td.info, .last-searches {
     color: gray;
     font-size: 12px;
     font-family: Arial, serif;
+}
+
+.last-searches span {
+    margin-right: 5px;
 }
 
 div.tags a, td.tag-cloud a {

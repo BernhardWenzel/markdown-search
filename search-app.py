@@ -1,9 +1,9 @@
+import codecs
+import os
 import threading
 from subprocess import call
 
 from flask import Flask, request, redirect, url_for, render_template, flash
-
-
 
 # create our little application :)
 from search import Search
@@ -17,8 +17,6 @@ class UpdateIndexTask(object):
     def run(self):
         search = Search(app.config["INDEX_DIR"])
         search.add_all_files(app.config["MARKDOWN_FILES_DIR"], tags_prefix=app.config["TAGS_PREFIX"], create_new_index=True, tags_regex=app.config["TAGS_REGEX"])
-
-
 
 app = Flask(__name__)
 
@@ -44,12 +42,35 @@ def search():
         result = []
     else:
         parsed_query, result, tag_cloud = search.search(query.split(), fields=[fields])
+        store_search(query, fields)
 
-    return render_template('search.html', entries=result, query=query, parsed_query=parsed_query, fields=fields, tag_cloud=tag_cloud)
+    return render_template('search.html', entries=result, query=query, parsed_query=parsed_query, fields=fields, tag_cloud=tag_cloud, last_searches=get_last_searches())
 
+def get_last_searches():
+    if os.path.exists("last_searches.txt"):
+        f = open("last_searches.txt", "r")
+        contents = f.readlines()
+        f.close()
+    else:
+        contents = []
+    return contents
+
+def store_search(query, fields):
+    if os.path.exists("last_searches.txt"):
+        with codecs.open("last_searches.txt", 'r', encoding='utf8') as f:
+            contents = f.readlines()
+    else:
+        contents = []
+
+    search = "query=%s&fields=%s\n" % (query, fields)
+    if not search in contents:
+        contents.insert(0, search)
+
+    with codecs.open("last_searches.txt", 'w', encoding='utf8') as f:
+        f.writelines(contents[:30])
 
 @app.route('/open')
-def open():
+def open_file():
     path = request.args['path']
     fields = request.args.get('fields')
     query = request.args['query']
