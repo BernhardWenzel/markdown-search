@@ -2,7 +2,7 @@
 MARKDOWN_FILES_DIR = "/home/user/wiki"
 
 # Location of index file
-INDEX_DIR = "/home/user/app/search_index"
+INDEX_DIR = "search_index"
 
 # Command to use when clicking on filepath in search results
 EDIT_COMMAND = "edit"

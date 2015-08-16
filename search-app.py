@@ -82,7 +82,7 @@ def open_file():
 def update_index():
     UpdateIndexTask()
     flash("Updating index, check console output")
-    return redirect(url_for("search", query="", fields=""))
+    return render_template("search.html", query="", fields="")
 
 if __name__ == '__main__':
     app.run()
