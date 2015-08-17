@@ -1,6 +1,6 @@
 # Search engine for local markdown files with tagging
 
-This is a local search engine that is optimized for markdown files. It takes advantage of markdown syntax by giving boost to words in headlines, emphasis and other markup. One special feature is that it treats the first line of a markdown file as a list of **tags** (this behaviour is configurable, this line can be prefixed with a term or switched off).
+This is a local search engine that is optimized for markdown files. It takes advantage of markdown syntax by giving boost to words in headlines, emphasis and other markup. One special feature is that it treats the first line of a markdown file as a list of **tags** (this behaviour is configurable, the tags line can be prefixed with a term or switched off).
   
 Implemented in **Python** using **Flask**, **Whoosh** and **Mistune**.
 
@@ -13,7 +13,7 @@ Clone/fork project. Rename `config.py.sample` to `config.py` and adjust the prop
 
 The search engine will index all files in this folder and it's subdirectories. 
 
-Install the Python requirements. Preferably in a virtualenv, run `pip install -r requirements.
+Install the Python requirements. Preferably in a virtualenv, run `pip install -r requirements`.
 
 ## Run search engine
 
@@ -23,41 +23,45 @@ Just run `python search-app.py` and open <http://127.0.0.1:5000> in a browser.
 
 ### Build/update index
 
-Click on the `[Update index]` link to re-build the search index. The location of the index can be configured in `config.py` by setting `INDEX_DIR`.
+Click on the `[Update index]` link to re-build the search index. The location of the index can be configured in `config.py` with `INDEX_DIR`.
 
 ## Tags
 
-The first line of a markdown file is treated as a list of tags. How this is done can be configured by changing the regex in `config.py`
+The first line of a markdown file is treated as a list of tags. How tags are stored can be configured by changing the regex in `config.py`
 
     # Regular expression to select tags, eg tag has to start with alphanumeric followed by at least two alphanumeric or "-" or "."
     TAGS_REGEX = r"\b([A-Za-z0-9][A-Za-z0-9-.]{2,})\b"
 
-Tags can be switched of or can be prefixed (e.g. "tags:"). If prefixed, the tags can be defined in any location of a file.
+Tags can be switched of or can be prefixed (e.g. "tags:"). If prefixed, the line with the tags definitions can be anywhere in the file.
 
 ### Show all tags
 
-At the beginning or when clicking on `[Clear]` or the link `Seach Directory: ...` all tags that are indexed are shown.
+When going to the starting page or when clicking on `[Clear]` or the link `Seach Directory: ...` all tags that are indexed are shown.
 
 ![Show all tags](http://www.bernhardwenzel.com/assets/images/markdown-search/search-cleared.jpg)
 
 
 ### Searching
 
-Type in the query as you would in any other search engine. The syntax is defined by the Whoosh library. To debug the actual query, it is displayed under the search input field (this can also be switched off). 
+Type in the query as you would in any other search engine. The syntax is defined by the Whoosh library[^whoosh-syntax]. To debug the actual query, it is displayed under the search input field (this can also be switched off). 
 
 ![Search](http://www.bernhardwenzel.com/assets/images/markdown-search/search-result.jpg)
 
+[^whoosh-syntax]:[Whoosh query syntax](https://pythonhosted.org/Whoosh/querylang.html)
+
 ### Searching for tags only
 
-Every search result displays the tags of a file and related tags to the query. Clicking on one tags search for this tag only. Alternatively, check the `only tags` checkbox.
+Every search result displays the tags of a file and related tags to the query. Clicking on one tag searches for this tag only. Alternatively, check the `only tags` checkbox.
 
 ![Search](http://www.bernhardwenzel.com/assets/images/markdown-search/tags-search.jpg)
 
-It is also possible to just search in the path name of a file, select `only file names` checkbox.
+### Searching for file path only
+
+If checking `only file names` the search query is limited to the file paths. The "cleared" search page (clicking on `[clear]` or the search directory link) shows additionally a list of all subdirectories. Clicking on one of those directories limits the search to files that match their path with the directory name. This list of directories gets updated when doing an index update and is stored in a plain text file named `directories.txt`.  
 
 ## Open a file in your local editor
 
-Under the tags of a search result is the path of that file. By clicking on the link it can be opened in your default editor. The command to run the path with is defined in the configuration with `EDIT_COMMAND`. This has been tested on MacOS (Windows at least probably requires to specify the path to an executable).With the default setting, if clicking on the path the following command is executed: `edit <PATH>`
+Under the tags of a search result is the path of that file. By clicking on the link it can be opened in your default editor. The command to run the path with is defined in the configuration with `EDIT_COMMAND`. This has been tested on MacOS (Windows probably requires to specify the full path to an executable). With the default setting, if clicking on the path the following command is executed: `edit <PATH>`
 
 ## Last searches
 
