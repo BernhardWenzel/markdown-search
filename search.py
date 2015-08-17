@@ -70,10 +70,10 @@ class Search:
 
     def add_document(self, file_path, tags_prefix='', tags_regex='\b[A-Za-z0-9][A-Za-z0-9-.]+\b'):
         base = os.path.basename(file_path)
-        file_name = unicode(file_path.replace(".", " ").replace("/", " ").replace("\\", " "))
+        file_name = unicode(file_path.replace(".", " ").replace("/", " ").replace("\\", " "), encoding="utf-8")
         writer = self.ix.writer()
         # read file content
-        with codecs.open(file_path, 'r', encoding='utf8') as f:
+        with codecs.open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
             path = unicode(file_path, "utf-8")
 
@@ -157,8 +157,8 @@ class Search:
             else:
                 fields = ["tags", "headlines", "content", "filename", "doubleemphasiswords", "emphasiswords"]
             query = MultifieldParser(fields, schema=self.ix.schema).parse(query_string)
-            parsed_query = str(query)
-            print "query: " + parsed_query
+            parsed_query = "%s" % query
+            print "query: %s" % parsed_query
             results = searcher.search(query, terms=False, scored=True, groupedby="path")
             key_terms = results.key_terms("tags", docs=100, numterms=100)
             tag_cloud = [keyword for keyword, score in key_terms]

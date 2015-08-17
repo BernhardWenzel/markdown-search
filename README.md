@@ -81,6 +81,17 @@ The search schema is defined in `search.py`. Adjust it if you want to give a dif
                 , content=TEXT(stored=True)
             )
   
+## Tip: changing between directories without rebuilding the index
+
+If you have different markdown files that you don't want to belong to the same index, it is quite easy to switch between different locations without the need to rebuild the index each time. Arrange your `config.py` the following way:
+
+    FOLDER = "write"
+    ROOT = "/Volumes/data/doc"
+    MARKDOWN_FILES_DIR = ROOT + "/" + FOLDER
+    INDEX_DIR = "/Users/bwenzel/appdata/mdsearch/" + FOLDER
+
+Now when changing the `FOLDER` parameter the search is use a different index (requires restart).
+  
 If you want to learn more about the project, have a look at the related post: <http://bernhardwenzel.com/2015-08-17-searching-local-markdown-files>
 
 
