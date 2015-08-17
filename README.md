@@ -90,7 +90,7 @@ If you have different markdown files that you don't want to belong to the same i
     MARKDOWN_FILES_DIR = ROOT + "/" + FOLDER
     INDEX_DIR = "/Users/bwenzel/appdata/mdsearch/" + FOLDER
 
-Now when changing the `FOLDER` parameter the search is use a different index (requires restart).
+Now when changing the `FOLDER` parameter the search is using a different index (requires restart).
   
 If you want to learn more about the project, have a look at the related post: <http://bernhardwenzel.com/2015-08-17-searching-local-markdown-files>
 

@@ -70,7 +70,7 @@ class Search:
 
     def add_document(self, file_path, tags_prefix='', tags_regex='\b[A-Za-z0-9][A-Za-z0-9-.]+\b'):
         base = os.path.basename(file_path)
-        file_name = unicode(file_path.replace(".", " ").replace("/", " ").replace("\\", " "), encoding="utf-8")
+        file_name = unicode(file_path.replace(".", " ").replace("/", " ").replace("\\", " ").replace("_", " ").replace("-", " "), encoding="utf-8")
         writer = self.ix.writer()
         # read file content
         with codecs.open(file_path, 'r', encoding='utf-8') as f:
@@ -143,20 +143,20 @@ class Search:
 
     def search(self, query_list, fields=None):
         with self.ix.searcher() as searcher:
-            query_string = " ".join(query_list)
-            qp = QueryParser("content", self.schema)
-            query = qp.parse(query_string)
-            is_phrase_query = isinstance(query, Phrase)
-            if len(fields) == 1 and fields[0] == "filename":
+            query_string = " ".join(query_list).lower()
+            query = None
+            if "\"" in query_string or ":" in query_string:
+                query = QueryParser("content", self.schema).parse(query_string)
+            elif len(fields) == 1 and fields[0] == "filename":
                 pass
-            if len(fields) == 1 and fields[0] == "tags":
-                if is_phrase_query:
-                    query_string = query_string.replace("\"", "")
-            elif is_phrase_query:
-                fields = ["content", "filename"]
+            elif len(fields) == 1 and fields[0] == "tags":
+                pass
+            elif len(fields) == 2:
+                pass
             else:
                 fields = ["tags", "headlines", "content", "filename", "doubleemphasiswords", "emphasiswords"]
-            query = MultifieldParser(fields, schema=self.ix.schema).parse(query_string)
+            if not query:
+                query = MultifieldParser(fields, schema=self.ix.schema).parse(query_string)
             parsed_query = "%s" % query
             print "query: %s" % parsed_query
             results = searcher.search(query, terms=False, scored=True, groupedby="path")
