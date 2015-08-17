@@ -43,11 +43,9 @@ When going to the starting page or when clicking on `[Clear]` or the link `Seach
 
 ### Searching
 
-Type in the query as you would in any other search engine. The syntax is defined by the Whoosh library[^whoosh-syntax]. To debug the actual query, it is displayed under the search input field (this can also be switched off). 
+Type in the query as you would in any other search engine. The syntax is defined by the Whoosh library (<https://pythonhosted.org/Whoosh/querylang.html>). To debug the actual query, it is displayed under the search input field (this can also be switched off). 
 
 ![Search](http://www.bernhardwenzel.com/assets/images/markdown-search/search-result.jpg)
-
-[^whoosh-syntax]:[Whoosh query syntax](https://pythonhosted.org/Whoosh/querylang.html)
 
 ### Searching for tags only
 
