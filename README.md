@@ -32,7 +32,7 @@ The first line of a markdown file is treated as a list of tags. How tags are sto
     # Regular expression to select tags, eg tag has to start with alphanumeric followed by at least two alphanumeric or "-" or "."
     TAGS_REGEX = r"\b([A-Za-z0-9][A-Za-z0-9-.]{2,})\b"
 
-Tags can be switched of or can be prefixed (e.g. "tags:"). If prefixed, the line with the tags definitions can be anywhere in the file.
+Tags can be switched off or can be prefixed (e.g. "tags:"). If prefixed, the line with the tags definitions can be anywhere in the file.
 
 ### Show all tags
 
