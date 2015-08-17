@@ -27,6 +27,15 @@
         </td>
     </tr>
     {% endif %}
+    {% if directories %}
+    <tr>
+        <td class="directories-cloud">File directories:&nbsp
+            {% for d in directories %}
+                <a href="{{url_for('search')}}?query={{d|trim}}&fields=filename">{{d|trim}}</a>
+            {% endfor %}
+        </td>
+    </tr>
+    {% endif %}
     {% if config['SHOW_PARSED_QUERY']%}
     <tr>
         <td class="info">Parsed query: {{ parsed_query }}</td>

@@ -38,20 +38,20 @@ Tags can be switched of or can be prefixed (e.g. "tags:"). If prefixed, the tags
 
 At the beginning or when clicking on `[Clear]` or the link `Seach Directory: ...` all tags that are indexed are shown.
 
-![Show all tags](http://bernhardwenzel.com/assets/images/markdown-search/search-cleared.jpg)
+![Show all tags](http://www.bernhardwenzel.com/assets/images/markdown-search/search-cleared.jpg)
 
 
 ### Searching
 
 Type in the query as you would in any other search engine. The syntax is defined by the Whoosh library. To debug the actual query, it is displayed under the search input field (this can also be switched off). 
 
-![Search](http://bernhardwenzel.com/assets/images/markdown-search/search.jpg)
+![Search](http://www.bernhardwenzel.com/assets/images/markdown-search/search-result.jpg)
 
 ### Searching for tags only
 
 Every search result displays the tags of a file and related tags to the query. Clicking on one tags search for this tag only. Alternatively, check the `only tags` checkbox.
 
-![Search](http://bernhardwenzel.com/assets/images/markdown-search/search.jpg)
+![Search](http://www.bernhardwenzel.com/assets/images/markdown-search/tags-search.jpg)
 
 It is also possible to just search in the path name of a file, select `only file names` checkbox.
 

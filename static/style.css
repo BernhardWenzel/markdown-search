@@ -69,12 +69,16 @@ td.info, .last-searches {
 div.tags a, td.tag-cloud a {
     color: #b56020;
     font-size: 12px;
-    /* font-weight: bold; */
 }
 
-td.tag-cloud {
+td.tag-cloud, td.directories-cloud {
     font-size: 12px;
     color: #555555;
+}
+
+td.directories-cloud a {
+    font-size: 12px;
+    color: #377BA8;
 }
 
 div.path {

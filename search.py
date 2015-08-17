@@ -70,7 +70,6 @@ class Search:
 
     def add_document(self, file_path, tags_prefix='', tags_regex='\b[A-Za-z0-9][A-Za-z0-9-.]+\b'):
         base = os.path.basename(file_path)
-        #file_name = unicode(os.path.splitext(base)[0])
         file_name = unicode(file_path.replace(".", " ").replace("/", " ").replace("\\", " "))
         writer = self.ix.writer()
         # read file content
@@ -148,9 +147,14 @@ class Search:
             qp = QueryParser("content", self.schema)
             query = qp.parse(query_string)
             is_phrase_query = isinstance(query, Phrase)
-            if is_phrase_query:
-                fields = ["content", "file_name"]
-            elif not fields or fields[0] is None or fields[0] is u'None':
+            if len(fields) == 1 and fields[0] == "filename":
+                pass
+            if len(fields) == 1 and fields[0] == "tags":
+                if is_phrase_query:
+                    query_string = query_string.replace("\"", "")
+            elif is_phrase_query:
+                fields = ["content", "filename"]
+            else:
                 fields = ["tags", "headlines", "content", "filename", "doubleemphasiswords", "emphasiswords"]
             query = MultifieldParser(fields, schema=self.ix.schema).parse(query_string)
             parsed_query = str(query)
