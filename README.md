@@ -69,19 +69,17 @@ On the bottom of the search result page is a list of the last searches. They are
 
 The search schema is defined in `search.py`. Adjust it if you want to give a different boost to fields.
 
-```python search.py
-class Search:
-    def open_index(self, index_folder, create_new=False):
-        schema = Schema(
-            path=ID(stored=True, unique=True)
-            , filename=TEXT(stored=True, field_boost=100.0)
-            , tags=KEYWORD(stored=True, scorable=True, field_boost=80.0)
-            , headlines=KEYWORD(stored=True, field_boost=60.0)
-            , doubleemphasiswords=KEYWORD(stored=True, field_boost=40.0)
-            , emphasiswords=KEYWORD(stored=True, field_boost=20.0)
-            , content=TEXT(stored=True)
-        )
-```
+    class Search:
+        def open_index(self, index_folder, create_new=False):
+            schema = Schema(
+                path=ID(stored=True, unique=True)
+                , filename=TEXT(stored=True, field_boost=100.0)
+                , tags=KEYWORD(stored=True, scorable=True, field_boost=80.0)
+                , headlines=KEYWORD(stored=True, field_boost=60.0)
+                , doubleemphasiswords=KEYWORD(stored=True, field_boost=40.0)
+                , emphasiswords=KEYWORD(stored=True, field_boost=20.0)
+                , content=TEXT(stored=True)
+            )
   
 If you want to learn more about the project, have a look at the related post: <http://bernhardwenzel.com/2015-08-17-searching-local-markdown-files>
 
