@@ -90,7 +90,7 @@ If you have different markdown files that you don't want to belong to the same i
     MARKDOWN_FILES_DIR = ROOT + "/" + FOLDER
     INDEX_DIR = "/Users/bwenzel/appdata/mdsearch/" + FOLDER
 
-Now when changing the `FOLDER` parameter the search is using a different index (requires restart).
+Now when changing the `FOLDER` parameter the search is using a different index (requires restart). You could even read this parameter from the environment (e.g  `os.environ.get("FOLDER")`) and then start the app with `export FOLDER="dev-files";python search-app-py` to supply the folder at start-up.
   
 If you want to learn more about the project, have a look at the related post: <http://www.bernhardwenzel.com/blog/2015/08/17/how-to-have-an-elephant-brain/>
 

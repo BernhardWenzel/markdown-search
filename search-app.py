@@ -1,10 +1,10 @@
-from glob import glob
-import codecs
-import os
 import threading
 from subprocess import call
 
+import codecs
+import os
 from flask import Flask, request, redirect, url_for, render_template, flash
+
 
 # create our little application :)
 from search import Search
@@ -17,7 +17,7 @@ class UpdateIndexTask(object):
 
     def run(self):
         search = Search(app.config["INDEX_DIR"])
-        search.add_all_files(app.config["MARKDOWN_FILES_DIR"], tags_prefix=app.config["TAGS_PREFIX"], create_new_index=True, tags_regex=app.config["TAGS_REGEX"])
+        search.add_all_files(app.config["MARKDOWN_FILES_DIR"], tags_prefix=app.config["TAGS_PREFIX"], create_new_index=True, tags_regex=app.config["TAGS_REGEX"], tags_to_ignore=app.config["TAGS_TO_IGNORE"])
 
 app = Flask(__name__)
 

@@ -1,3 +1,6 @@
+import shutil
+import HTMLParser
+
 from markdown_parser import MarkdownParser
 import mistune
 from whoosh.fields import *
@@ -6,9 +9,6 @@ import os
 import os.path
 import codecs
 from whoosh.qparser import MultifieldParser, QueryParser
-import shutil
-import HTMLParser
-from whoosh.query import Phrase
 
 
 class SearchResult:
@@ -68,7 +68,7 @@ class Search:
         else:
             self.ix = index.open_dir(index_folder)
 
-    def add_document(self, file_path, tags_prefix='', tags_regex='\b[A-Za-z0-9][A-Za-z0-9-.]+\b'):
+    def add_document(self, file_path, tags_prefix=u'', tags_regex='\b[A-Za-z0-9][A-Za-z0-9-.]+\b', tags_to_ignore=u''):
         base = os.path.basename(file_path)
         file_name = unicode(file_path.replace(".", " ").replace("/", " ").replace("\\", " ").replace("_", " ").replace("-", " "), encoding="utf-8")
         writer = self.ix.writer()
@@ -79,8 +79,10 @@ class Search:
 
         # parse markdown fields
         parser = MarkdownParser()
-        parser.parse(content, tags_prefix=tags_prefix, tags_regex=tags_regex)
+        parser.parse(content, tags_prefix=tags_prefix, tags_regex=tags_regex, tags_to_ignore=tags_to_ignore)
 
+        print "adding to index: path: %s size:%d tags:'%s' headlines:'%s'" % (
+            path, len(content), parser.tags, parser.headlines)
         writer.add_document(
             path=path
             , filename=file_name
@@ -90,11 +92,9 @@ class Search:
             , doubleemphasiswords=parser.doubleemphasiswords
             , emphasiswords=parser.emphasiswords
         )
-        print "adding to index: path: %s size:%d tags:'%s' headlines:'%s'" % (
-            path, len(content), parser.tags, parser.headlines)
         writer.commit()
 
-    def add_all_files(self, file_dir, tags_prefix='', create_new_index=False, tags_regex=None):
+    def add_all_files(self, file_dir, tags_prefix='', create_new_index=False, tags_regex=None, tags_to_ignore=u""):
         if create_new_index:
             self.open_index(self.index_folder, create_new=True)
 
@@ -103,7 +103,7 @@ class Search:
             for file in files:
                 if file.endswith(".md") or file.endswith("markdown"):
                     path = os.path.join(root, file)
-                    self.add_document(path, tags_prefix=tags_prefix, tags_regex=tags_regex)
+                    self.add_document(path, tags_prefix=tags_prefix, tags_regex=tags_regex, tags_to_ignore=tags_to_ignore)
                     count += 1
         print "Done, added/updated %d documents to the index" % count
 

@@ -35,15 +35,15 @@ class MarkdownParser:
         self.doubleemphasiswords=u''
         self.emphasiswords=u''
 
-    def parse(self, markdown_text, tags_prefix='', tags_regex='[^a-zA-Z\d\s]+'):
+    def parse(self, markdown_text, tags_prefix='', tags_regex='[^a-zA-Z\d\s]+', tags_to_ignore=""):
         renderer = ParsingRenderer()
         markdown = mistune.Markdown(renderer=renderer)
         markdown(markdown_text)
         self.blocks = renderer.blocks
         self.headlines = renderer.headlines if renderer.headlines.strip() else u''
-        self.tags = self.get_tags_line(markdown_text, tags_prefix, tags_regex)
+        self.tags = self.get_tags_line(markdown_text, tags_prefix, tags_regex, tags_to_ignore)
 
-    def get_tags_line(self, markdown_text, tags_prefix, tags_regex):
+    def get_tags_line(self, markdown_text, tags_prefix, tags_regex, tags_to_ignore):
         if len(markdown_text):
             tags_line = u''
             if tags_prefix:
@@ -61,6 +61,6 @@ class MarkdownParser:
             pattern = re.compile(tags_regex, re.UNICODE)
             tags = pattern.findall(tags_line)
             if tags:
-                return " ".join([t for t in tags])
+                return u" ".join([t for t in tags if t not in tags_to_ignore])
 
         return u''
