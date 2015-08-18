@@ -17,7 +17,7 @@ USE_TAGS=True
 TAGS_PREFIX=""
 
 # List of tags that should be ignored
-TAGS_TO_IGNORE = "and or are what how its not with"
+TAGS_TO_IGNORE = "and are what how its not with the"
 
 # Regular expression to select tags, eg tag has to start with alphanumeric followed by at least two alphanumeric or "-" or "."
 TAGS_REGEX = r"\b([A-Za-z0-9][A-Za-z0-9-.]{2,})\b"
