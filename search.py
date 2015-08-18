@@ -143,7 +143,7 @@ class Search:
 
     def search(self, query_list, fields=None):
         with self.ix.searcher() as searcher:
-            query_string = " ".join(query_list).lower()
+            query_string = " ".join(query_list)
             query = None
             if "\"" in query_string or ":" in query_string:
                 query = QueryParser("content", self.schema).parse(query_string)
