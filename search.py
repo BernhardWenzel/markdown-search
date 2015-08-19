@@ -71,7 +71,7 @@ class Search:
         else:
             self.ix = index.open_dir(index_folder)
 
-    def add_document(self, writer, file_path, tags_prefix=u'', tags_regex='\b[A-Za-z0-9][A-Za-z0-9-.]+\b', tags_to_ignore=u''):
+    def add_document(self, writer, file_path, config):
         file_name = unicode(file_path.replace(".", " ").replace("/", " ").replace("\\", " ").replace("_", " ").replace("-", " "), encoding="utf-8")
         # read file content
         with codecs.open(file_path, 'r', encoding='utf-8') as f:
@@ -80,7 +80,7 @@ class Search:
 
         # parse markdown fields
         parser = MarkdownParser()
-        parser.parse(content, tags_prefix=tags_prefix, tags_regex=tags_regex, tags_to_ignore=tags_to_ignore)
+        parser.parse(content, config)
 
         modtime = os.path.getmtime(path)
         print "adding to index: path: %s size:%d tags:'%s' headlines:'%s' modtime=%d" % (
@@ -97,7 +97,7 @@ class Search:
         )
 
 
-    def add_all_files(self, file_dir, tags_prefix='', create_new_index=False, tags_regex=None, tags_to_ignore=u""):
+    def add_all_files(self, file_dir, config, create_new_index=False):
         if create_new_index:
             self.open_index(self.index_folder, create_new=True)
 
@@ -107,12 +107,13 @@ class Search:
             for file in files:
                 if file.endswith(".md") or file.endswith("markdown"):
                     path = os.path.join(root, file)
-                    self.add_document(writer, path, tags_prefix=tags_prefix, tags_regex=tags_regex, tags_to_ignore=tags_to_ignore)
+                    self.add_document(writer, path, config)
                     count += 1
         writer.commit()
         print "Done, added %d documents to the index" % count
 
-    def update_index_incremental(self, file_dir, tags_prefix='', create_new_index=False, tags_regex=None, tags_to_ignore=u""):
+    def update_index_incremental(self, config, create_new_index=False):
+        file_dir = config["MARKDOWN_FILES_DIR"]
         if create_new_index:
             self.open_index(self.index_folder, create_new=True)
 
@@ -159,7 +160,7 @@ class Search:
                 if path in to_index or path not in indexed_paths:
                     # This is either a file that's changed, or a new file
                     # that wasn't indexed before. So index it!
-                    self.add_document(writer, path, tags_prefix=tags_prefix, tags_regex=tags_regex, tags_to_ignore=tags_to_ignore)
+                    self.add_document(writer, path, config)
                     count += 1
 
             writer.commit()

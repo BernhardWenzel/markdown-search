@@ -1,5 +1,6 @@
 import mistune
 import re
+#from nltk.tag import pos_tag
 
 # http://mistune.readthedocs.org/en/latest/
 
@@ -8,8 +9,8 @@ class ParsingRenderer(mistune.Renderer):
         super(ParsingRenderer, self).__init__(**kwargs)
         self.blocks = []
         self.headlines = u''
-        self.doubleemphasiswords=u''
-        self.emphasiswords=u''
+        self.doubleemphasiswords = u''
+        self.emphasiswords = u''
 
     def block_code(self, code, lang):
         self.blocks.append(code)
@@ -27,23 +28,27 @@ class ParsingRenderer(mistune.Renderer):
         self.emphasiswords += "%s " % text.lower()
         return super(ParsingRenderer, self).emphasis(text)
 
+
 class MarkdownParser:
     def __init__(self):
         self.blocks = []
         self.headlines = u''
         self.tags = u''
-        self.doubleemphasiswords=u''
-        self.emphasiswords=u''
+        self.doubleemphasiswords = u''
+        self.emphasiswords = u''
 
-    def parse(self, markdown_text, tags_prefix='', tags_regex='[^a-zA-Z\d\s]+', tags_to_ignore=""):
+    def parse(self, markdown_text, config):
         renderer = ParsingRenderer()
         markdown = mistune.Markdown(renderer=renderer)
         markdown(markdown_text)
         self.blocks = renderer.blocks
         self.headlines = renderer.headlines if renderer.headlines.strip() else u''
-        self.tags = self.get_tags_line(markdown_text, tags_prefix, tags_regex, tags_to_ignore)
+        self.tags = self.get_tags_line(markdown_text, config)
 
-    def get_tags_line(self, markdown_text, tags_prefix, tags_regex, tags_to_ignore):
+    def get_tags_line(self, markdown_text, config):
+        tags_prefix = config["TAGS_PREFIX"]
+        tags_regex = config["TAGS_REGEX"]
+        tags_to_ignore = config["TAGS_TO_IGNORE"]
         if len(markdown_text):
             tags_line = u''
             if tags_prefix:
@@ -62,5 +67,7 @@ class MarkdownParser:
             tags = pattern.findall(tags_line)
             if tags:
                 return u" ".join([t for t in tags if t not in tags_to_ignore])
-
+                # Only choose nouns
+                # tagged_tags = pos_tag(tags)
+                # return u" ".join([word for word, pos in tagged_tags if pos == 'NN' and word not in tags_to_ignore])
         return u''

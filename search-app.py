@@ -17,7 +17,7 @@ class UpdateIndexTask(object):
 
     def run(self):
         search = Search(app.config["INDEX_DIR"])
-        search.update_index_incremental(app.config["MARKDOWN_FILES_DIR"], tags_prefix=app.config["TAGS_PREFIX"], tags_regex=app.config["TAGS_REGEX"], tags_to_ignore=app.config["TAGS_TO_IGNORE"])
+        search.update_index_incremental(app.config)
 
 app = Flask(__name__)
 
