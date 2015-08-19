@@ -14,7 +14,6 @@ h1, h2 {
 h1 {
     border-bottom: 1px solid #eee;
     font-size: 22px;
-    margin-bottom: 2px;
 }
 
 h2 {
@@ -132,4 +131,10 @@ b.term3 {
 b.term4 {
     background-color: #faffdd;
     padding: 1px;
+}
+
+a.index {
+    font-size: 13px;
+    margin-right: 5px;
+    color: #76768A;
 }

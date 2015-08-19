@@ -10,14 +10,15 @@ from flask import Flask, request, redirect, url_for, render_template, flash
 from search import Search
 
 class UpdateIndexTask(object):
-    def __init__(self):
+    def __init__(self, rebuild_index=False):
+        self.rebuild_index = rebuild_index
         thread = threading.Thread(target=self.run, args=())
         thread.daemon = True
         thread.start()
 
-    def run(self):
+    def run(self, rebuild_index=False):
         search = Search(app.config["INDEX_DIR"])
-        search.update_index_incremental(app.config)
+        search.update_index_incremental(app.config, create_new_index=self.rebuild_index)
 
 app = Flask(__name__)
 
@@ -65,8 +66,13 @@ def open_file():
 
 @app.route('/update_index')
 def update_index():
-    UpdateIndexTask()
-    flash("Updating index, check console output")
+    rebuild = request.args.get('rebuild')
+    if rebuild:
+        UpdateIndexTask(rebuild_index=True)
+        flash("Rebuilding index, check console output")
+    else:
+        UpdateIndexTask()
+        flash("Updating index, check console output")
     store_directories()
     return render_template("search.html", query="", fields="", last_searches=get_last_searches())
 

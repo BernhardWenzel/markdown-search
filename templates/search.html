@@ -1,7 +1,8 @@
 {% extends "layout.html" %}
 {% block body %}
 <h1><a href="{{ url_for('search')}}?query=&fields=">Search directory: {{ config.MARKDOWN_FILES_DIR }}</a></h1>
-<a href="{{ url_for('update_index')}}">update index</a>
+<a class="index" href="{{ url_for('update_index')}}">[update index]</a>
+<a class="index" href="{{ url_for('update_index')}}?rebuild=True">[rebuild index]</a>
 <form action="{{ url_for('search') }}" name="search">
     <input type="text" name="query" value="{{ query }}">
     <input type="submit" value="search">
