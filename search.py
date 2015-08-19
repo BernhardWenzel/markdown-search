@@ -64,16 +64,15 @@ class Search:
             , doubleemphasiswords=KEYWORD(stored=True, scorable=True, field_boost=40.0)
             , emphasiswords=KEYWORD(stored=True, scorable=True, field_boost=20.0)
             , content=TEXT(stored=True, analyzer=stemming_analyzer)
+            , time=STORED
         )
         if not exists:
             self.ix = index.create_in(index_folder, schema)
         else:
             self.ix = index.open_dir(index_folder)
 
-    def add_document(self, file_path, tags_prefix=u'', tags_regex='\b[A-Za-z0-9][A-Za-z0-9-.]+\b', tags_to_ignore=u''):
-        base = os.path.basename(file_path)
+    def add_document(self, writer, file_path, tags_prefix=u'', tags_regex='\b[A-Za-z0-9][A-Za-z0-9-.]+\b', tags_to_ignore=u''):
         file_name = unicode(file_path.replace(".", " ").replace("/", " ").replace("\\", " ").replace("_", " ").replace("-", " "), encoding="utf-8")
-        writer = self.ix.writer()
         # read file content
         with codecs.open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
@@ -83,8 +82,9 @@ class Search:
         parser = MarkdownParser()
         parser.parse(content, tags_prefix=tags_prefix, tags_regex=tags_regex, tags_to_ignore=tags_to_ignore)
 
-        print "adding to index: path: %s size:%d tags:'%s' headlines:'%s'" % (
-            path, len(content), parser.tags, parser.headlines)
+        modtime = os.path.getmtime(path)
+        print "adding to index: path: %s size:%d tags:'%s' headlines:'%s' modtime=%d" % (
+            path, len(content), parser.tags, parser.headlines, modtime)
         writer.add_document(
             path=path
             , filename=file_name
@@ -93,21 +93,78 @@ class Search:
             , content=content
             , doubleemphasiswords=parser.doubleemphasiswords
             , emphasiswords=parser.emphasiswords
+            , time = modtime
         )
-        writer.commit()
+
 
     def add_all_files(self, file_dir, tags_prefix='', create_new_index=False, tags_regex=None, tags_to_ignore=u""):
         if create_new_index:
             self.open_index(self.index_folder, create_new=True)
 
         count = 0
+        writer = self.ix.writer()
         for root, dirs, files in os.walk(file_dir, followlinks=True):
             for file in files:
                 if file.endswith(".md") or file.endswith("markdown"):
                     path = os.path.join(root, file)
-                    self.add_document(path, tags_prefix=tags_prefix, tags_regex=tags_regex, tags_to_ignore=tags_to_ignore)
+                    self.add_document(writer, path, tags_prefix=tags_prefix, tags_regex=tags_regex, tags_to_ignore=tags_to_ignore)
                     count += 1
-        print "Done, added/updated %d documents to the index" % count
+        writer.commit()
+        print "Done, added %d documents to the index" % count
+
+    def update_index_incremental(self, file_dir, tags_prefix='', create_new_index=False, tags_regex=None, tags_to_ignore=u""):
+        if create_new_index:
+            self.open_index(self.index_folder, create_new=True)
+
+        all_files = []
+        for root, dirs, files in os.walk(file_dir, followlinks=True):
+            for file in files:
+                if file.endswith(".md") or file.endswith("markdown"):
+                    path = os.path.join(root, file)
+                    all_files.append(path)
+
+        # see: https://pythonhosted.org/Whoosh/indexing.html#incremental-indexing
+        # The set of all paths in the index
+        indexed_paths = set()
+        # The set of all paths we need to re-index
+        to_index = set()
+
+        count = 0
+        with self.ix.searcher() as searcher:
+            writer = self.ix.writer()
+
+            # Loop over the stored fields in the index
+            for fields in searcher.all_stored_fields():
+                indexed_path = fields['path']
+                indexed_paths.add(indexed_path)
+
+                if not os.path.exists(indexed_path):
+                    # This file was deleted since it was indexed
+                    writer.delete_by_term('path', indexed_path)
+                    print "removed from index: %s" % indexed_path
+
+                else:
+                    # Check if this file was changed since it
+                    # was indexed
+                    indexed_time = fields['time']
+                    mtime = os.path.getmtime(indexed_path)
+                    if mtime > indexed_time:
+                        # The file has changed, delete it and add it to the list of
+                        # files to reindex
+                        writer.delete_by_term('path', indexed_path)
+                        to_index.add(indexed_path)
+
+            # Loop over the files in the filesystem
+            for path in all_files:
+                if path in to_index or path not in indexed_paths:
+                    # This is either a file that's changed, or a new file
+                    # that wasn't indexed before. So index it!
+                    self.add_document(writer, path, tags_prefix=tags_prefix, tags_regex=tags_regex, tags_to_ignore=tags_to_ignore)
+                    count += 1
+
+            writer.commit()
+
+            print "Done, updated %d documents in the index" % count
 
     def create_search_result(self, results):
         # Allow larger fragments
