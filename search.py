@@ -9,7 +9,7 @@ import os
 import os.path
 import codecs
 from whoosh.qparser import MultifieldParser, QueryParser
-
+from whoosh.analysis import StemmingAnalyzer
 
 class SearchResult:
     score = 1.0
@@ -54,14 +54,16 @@ class Search:
             os.mkdir(index_folder)
 
         exists = index.exists_in(index_folder)
+        stemming_analyzer = StemmingAnalyzer()
+
         schema = Schema(
             path=ID(stored=True, unique=True)
             , filename=TEXT(stored=True, field_boost=100.0)
             , tags=KEYWORD(stored=True, scorable=True, field_boost=80.0)
-            , headlines=KEYWORD(stored=True, field_boost=60.0)
-            , doubleemphasiswords=KEYWORD(stored=True, field_boost=40.0)
-            , emphasiswords=KEYWORD(stored=True, field_boost=20.0)
-            , content=TEXT(stored=True)
+            , headlines=KEYWORD(stored=True, scorable=True, field_boost=60.0)
+            , doubleemphasiswords=KEYWORD(stored=True, scorable=True, field_boost=40.0)
+            , emphasiswords=KEYWORD(stored=True, scorable=True, field_boost=20.0)
+            , content=TEXT(stored=True, analyzer=stemming_analyzer)
         )
         if not exists:
             self.ix = index.create_in(index_folder, schema)
@@ -165,6 +167,9 @@ class Search:
             search_result = self.create_search_result(results)
 
         return parsed_query, search_result, tag_cloud
+
+    def get_document_total_count(self):
+        return self.ix.searcher().doc_count_all()
 
 if __name__ == "__main__":
     search = Search("search_index")
