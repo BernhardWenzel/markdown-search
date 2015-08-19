@@ -68,7 +68,7 @@ def update_index():
     UpdateIndexTask()
     flash("Updating index, check console output")
     store_directories()
-    return render_template("search.html", query="", fields="")
+    return render_template("search.html", query="", fields="", last_searches=get_last_searches())
 
 
 def get_last_searches():
