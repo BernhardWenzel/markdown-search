@@ -43,7 +43,7 @@ To enable it, uncomment following lines in `markdown_parser.py` (and delete line
     65:     return u" ".join([t for t in tags if t not in tags_to_ignore])
     66:     # Only choose nouns
     67:     # tagged_tags = pos_tag(tags)
-    68:     # return u" ".join([word for word,pos in tagged_tags if pos == 'NNP' and word not in tags_to_ignore])
+    68:     # return u" ".join([word for word,pos in tagged_tags if pos == 'NN' and word not in tags_to_ignore])
 
 This requires to have `nltk` & `numpy` installed and to manually download the `maxent_treebank_pos_tagger` module.
     
