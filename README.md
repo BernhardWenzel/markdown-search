@@ -112,7 +112,7 @@ If you have different markdown files that you don't want to belong to the same i
     MARKDOWN_FILES_DIR = ROOT + "/" + FOLDER
     INDEX_DIR = "/Users/bwenzel/appdata/mdsearch/" + FOLDER
 
-Now when changing the `FOLDER` parameter the search is using a different index (requires restart). You could even read this parameter from the environment (e.g  `os.environ.get("FOLDER")`) and then start the app using a bash script:
+Now when changing the `FOLDER` parameter the search is using a different index (requires restart). You could even read this parameter from the environment (e.g  `os.environ.get("FOLDER")`) or providing the folder using using a bash script (e.g. `search.sh`):
 
     #!/usr/bin/env bash
     export FOLDER="$1"
@@ -120,6 +120,7 @@ Now when changing the `FOLDER` parameter the search is using a different index (
     source venv/bin/activate
     python search-app.py 
 
+Now you point the search engine to your local folder by running: `search.sh write`. 
   
 If you want to learn more about the project, have a look at the related post: <http://www.bernhardwenzel.com/blog/2015/08/17/how-to-have-an-elephant-brain/>
 
