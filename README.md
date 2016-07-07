@@ -36,7 +36,7 @@ Tags can be switched off or can be prefixed (e.g. "tags:"). If prefixed, the lin
 
 ## Choose only nouns as tags (recommended)
 
-To enable it, uncomment lines 71-79 in `markdown_parser.py` and delete line 69
+To enable it, uncomment lines 71-79 in `markdown_parser.py` and delete line 69 (or checkout the branch "noun_tags")
 
     3: # from nltk.tag import pos_tag
     68: if tags:

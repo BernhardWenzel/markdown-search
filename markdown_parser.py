@@ -1,6 +1,6 @@
 import mistune
 import re
-# from nltk.tag import pos_tag
+from nltk.tag import pos_tag
 
 # http://mistune.readthedocs.org/en/latest/
 
@@ -66,15 +66,14 @@ class MarkdownParser:
             pattern = re.compile(tags_regex, re.UNICODE)
             tags = set(pattern.findall(tags_line))
             if tags:
-                return u" ".join([t for t in tags if t not in tags_to_ignore])
                 # Only choose nouns
-                # filtered_tags = []
-                # tagged_tags = pos_tag(tags_line.split())
-                # for t in tags:
-                #     if t not in tags_to_ignore:
-                #         for word, pos in tagged_tags:
-                #             if word == t and pos.startswith('NN'):
-                #                 filtered_tags.append(t)
-                #                 break
-                # return u" ".join([t for t in filtered_tags])
+                filtered_tags = []
+                tagged_tags = pos_tag(tags_line.split())
+                for t in tags:
+                    if t not in tags_to_ignore:
+                        for word, pos in tagged_tags:
+                            if word == t and pos.startswith('NN'):
+                                filtered_tags.append(t)
+                                break
+                return u" ".join([t for t in filtered_tags])
         return u''
