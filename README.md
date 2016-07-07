@@ -34,16 +34,23 @@ The first line of a markdown file is treated as a list of tags. How tags are sto
 
 Tags can be switched off or can be prefixed (e.g. "tags:"). If prefixed, the line with the tags definitions can be anywhere in the file.
 
-## Choose only nouns as tags
+## Choose only nouns as tags (recommended)
 
-To enable it, uncomment following lines in `markdown_parser.py` (and delete line 65)
+To enable it, uncomment lines 71-79 in `markdown_parser.py` and delete line 69
 
     3: # from nltk.tag import pos_tag
-    64: if tags:
-    65:     return u" ".join([t for t in tags if t not in tags_to_ignore])
-    66:     # Only choose nouns
-    67:     # tagged_tags = pos_tag(tags)
-    68:     # return u" ".join([word for word,pos in tagged_tags if pos == 'NN' and word not in tags_to_ignore])
+    68: if tags:
+    69:     return u" ".join([t for t in tags if t not in tags_to_ignore])
+    70:     # Only choose nouns
+    71:     # filtered_tags = []
+    72:     # tagged_tags = pos_tag(tags_line.split())
+    73:     # for t in tags:
+    74:     #     if t not in tags_to_ignore:
+    75:     #         for word, pos in tagged_tags:
+    76:     #             if word == t and pos.startswith('NN'):
+    77:     #                 filtered_tags.append(t)
+    78:     #                 break
+    79:     # return u" ".join([t for t in filtered_tags])
 
 This requires to have `nltk` & `numpy` installed and to manually download the `maxent_treebank_pos_tagger` module.
     
