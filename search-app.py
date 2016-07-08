@@ -64,6 +64,19 @@ def open_file():
 
     return redirect(url_for("search", query=query, fields=fields))
 
+
+@app.route('/view')
+def view_file():
+    path = request.args['path']
+    fields = request.args.get('fields')
+    query = request.args['query']
+    # List parameter in config not possible?
+    # args = app.config["VIEW_COMMAND"].append(path)
+    args = ["open", "-a", "Marked 2", path]
+    call(args)
+
+    return redirect(url_for("search", query=query, fields=fields))
+
 @app.route('/update_index')
 def update_index():
     rebuild = request.args.get('rebuild')

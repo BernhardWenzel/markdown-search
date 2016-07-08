@@ -1,6 +1,7 @@
 import shutil
 import HTMLParser
 
+import config
 from markdown_parser import MarkdownParser
 import mistune
 from whoosh.fields import *
@@ -231,4 +232,4 @@ class Search:
 
 if __name__ == "__main__":
     search = Search("search_index")
-    search.add_all_files("/Volumes/data/doc/wiki/dev")
+    search.add_all_files("/Volumes/data/doc/wiki/dev", config)
