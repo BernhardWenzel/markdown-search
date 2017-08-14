@@ -72,7 +72,7 @@ When going to the starting page or when clicking on `[Clear]` or the link `Seach
 
 ### Searching
 
-Type in the query as you would in any other search engine. The syntax is defined by the Whoosh library (<https://pythonhosted.org/Whoosh/querylang.html>). It is possible to search for specific fields, e.g. `tags:java headlines:Introduction content:"java 8"`. If no fields are provided (either in the query or using the checkboxes) the query is applied to all fields. To debug the actual query, it is displayed under the search input field (this can also be switched off). 
+Type in the query as you would in any other search engine. The syntax is defined by the Whoosh library (<https://whoosh.readthedocs.io/en/latest/querylang.html>). It is possible to search for specific fields, e.g. `tags:java headlines:Introduction content:"java 8"`. If no fields are provided (either in the query or using the checkboxes) the query is applied to all fields. To debug the actual query, it is displayed under the search input field (this can also be switched off). 
 
 ![Search](https://raw.githubusercontent.com/BernhardWenzel/bernhardwenzel.github.io/master/img/markdown-search/search-result.jpg)
 
