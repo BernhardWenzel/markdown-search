@@ -27,6 +27,8 @@ app.config.from_pyfile("config.py")
 
 last_searches_file = app.config["INDEX_DIR"] + "/last_searches.txt"
 directories_file = app.config["INDEX_DIR"] + "/directories.txt"
+favourite_searches_file = app.config["INDEX_DIR"] + "/favourite_searches.txt"
+favourite_directories_file = app.config["INDEX_DIR"] + "/favourite_directories.txt"
 
 @app.route('/')
 def index():
@@ -36,16 +38,19 @@ def index():
 def search():
     query = request.args['query']
     fields = request.args.get('fields')
-    if fields == 'None':
-        fields = None
+    if fields == 'None' or not fields:
+        fields = []
 
     directories = []
     search = Search(app.config["INDEX_DIR"])
+    favourite_searches = read_storage(favourite_searches_file)
+    favourite_directories = read_storage(favourite_directories_file)
+    last_searches=read_storage(last_searches_file)
     if not query:
         tag_cloud = search.get_tags()
         parsed_query = ""
         result = []
-        directories=get_directories()
+        directories=read_storage(directories_file)
 
     else:
         parsed_query, result, tag_cloud = search.search(query.split(), fields=[fields])
@@ -53,7 +58,7 @@ def search():
 
     total = search.get_document_total_count()
 
-    return render_template('search.html', entries=result, query=query, parsed_query=parsed_query, fields=fields, tag_cloud=tag_cloud, last_searches=get_last_searches(), directories=directories, total=total)
+    return render_template('search.html', entries=result, query=query, parsed_query=parsed_query, fields=fields, tag_cloud=tag_cloud, last_searches=last_searches, directories=directories, total=total, favourite_searches=favourite_searches, favourite_directories=favourite_directories)
 
 @app.route('/open')
 def open_file():
@@ -71,8 +76,8 @@ def view_file():
     fields = request.args.get('fields')
     query = request.args['query']
     # List parameter in config not possible?
-    # args = app.config["VIEW_COMMAND"].append(path)
-    args = ["open", "-a", "Marked 2", path]
+    view_command = app.config["VIEW_COMMAND"]
+    args = ["open", "-a", view_command, path]
     call(args)
 
     return redirect(url_for("search", query=query, fields=fields))
@@ -90,22 +95,15 @@ def update_index():
     return render_template("search.html", query="", fields="", last_searches=get_last_searches())
 
 
-def get_last_searches():
-    if os.path.exists(last_searches_file):
-        with codecs.open(last_searches_file, 'r', encoding='utf-8') as f:
+def read_storage(file):
+    if os.path.exists(file):
+        with codecs.open(file, 'r', encoding='utf-8') as f:
             contents = f.readlines()
     else:
         contents = []
+        open(file, 'a').close()
+        
     return contents
-
-def get_directories():
-    if os.path.exists(directories_file):
-        with codecs.open(directories_file, 'r', encoding='utf-8') as f:
-            directories = f.readlines()
-            f.close()
-    else:
-        directories = []
-    return directories
 
 def store_search(query, fields):
     if os.path.exists(last_searches_file):

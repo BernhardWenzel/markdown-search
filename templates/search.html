@@ -7,23 +7,42 @@
     <input type="text" name="query" value="{{ query }}">
     <input type="submit" value="search">
     {% if config['USE_TAGS'] %}
-        {% if fields == "tags" %}
+        {% if "sortbydate" in fields %}
+            <input type="checkbox" checked name="fields" value="sortbydate"/>{% else %}<input type="checkbox" name="fields" value="sortbydate"/>
+        {%endif%}
+        <span class="label">sort by date</span>
+        {% if "tags" in fields %}
             <input type="checkbox" checked name="fields" value="tags"/>{% else %}<input type="checkbox" name="fields" value="tags"/>
         {%endif%}
         <span class="label">only tags</span>
-        {% if fields == "filename" %}
+        {% if "filename" in fields %}
             <input type="checkbox" checked name="fields" value="filename"/>{% else %}<input type="checkbox" name="fields" value="filename"/>
         {%endif%}
         <span class="label">only file names</span>
     {%endif%}
     <a href="{{ url_for('search')}}?query=&fields=">[clear]</a>
+    <a href="https://www.google.com/webhp?ie=UTF-8#q={{query}}" target="_blank">google it</a>
 </form>
 <table cellspacing="3">
+    <tr>
+        <td class="tag-cloud">Favourite searches:&nbsp
+            {% for t in favourite_searches %}
+                <a href="{{url_for('search')}}?query={{t}}&fields=tags">{{t|trim}}</a>
+            {% endfor %}
+        </td>
+    </tr>
+    <tr>
+        <td class="directories-cloud">Favourite directories:&nbsp
+            {% for d in favourite_directories %}
+                <a href="{{url_for('search')}}?query={{d|trim}}&fields=filename">{{d|trim}}</a>
+            {% endfor %}
+        </td>
+    </tr>
     {% if tag_cloud and config['USE_TAGS'] %}
     <tr>
         <td class="tag-cloud">Related tags:&nbsp
             {% for t in tag_cloud%}
-                <a href="{{url_for('search')}}?query={{t}}&fields=tags">{{t}}</a>
+                <a href="{{url_for('search')}}?query={{t}}&fields=tags">{{t|trim}}</a>
             {% endfor %}
         </td>
     </tr>
@@ -59,7 +78,7 @@
             <div class="path">
                 <a href='{{ url_for("open_file")}}?path={{e.path|urlencode}}&query={{query}}&fields={{fields}}'>{{e.path}}</a>
                 <a href='{{ url_for("view_file")}}?path={{e.path|urlencode}}&query={{query}}&fields={{fields}}'>view</a>
-                score: {{'%d'  % e.score}}
+                score: {{e.score | string | truncate(8)}} modified: {{ e.modified }}
             </div>
             <div class="markdown-body">{{ e.content_highlight|safe}}</div>
         </td>

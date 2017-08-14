@@ -9,6 +9,7 @@ import whoosh.index as index
 import os
 import os.path
 import codecs
+from datetime import datetime
 from whoosh.qparser import MultifieldParser, QueryParser
 from whoosh.analysis import StemmingAnalyzer
 
@@ -19,6 +20,7 @@ class SearchResult:
     content_highlight = ""
     headlines = None
     tags = ""
+    modified = ""
 
 
 class DontEscapeHtmlInCodeRenderer(mistune.Renderer):
@@ -65,6 +67,7 @@ class Search:
             , doubleemphasiswords=KEYWORD(stored=True, scorable=True, field_boost=40.0)
             , emphasiswords=KEYWORD(stored=True, scorable=True, field_boost=20.0)
             , content=TEXT(stored=True, analyzer=stemming_analyzer)
+            , modified=DATETIME(sortable=True)
             , time=STORED
         )
         if not exists:
@@ -84,8 +87,8 @@ class Search:
         parser.parse(content, config)
 
         modtime = os.path.getmtime(path)
-        print "adding to index: path: %s size:%d tags:'%s' headlines:'%s' modtime=%d" % (
-            path, len(content), parser.tags, parser.headlines, modtime)
+        modified = datetime.fromtimestamp(modtime)
+        print "adding to index: path: %s size:%d tags:'%s' headlines:'%s' modified=%s modtime=%d" % (path, len(content), parser.tags, parser.headlines, modified, modtime)
         writer.add_document(
             path=path
             , filename=file_name
@@ -94,7 +97,8 @@ class Search:
             , content=content
             , doubleemphasiswords=parser.doubleemphasiswords
             , emphasiswords=parser.emphasiswords
-            , time = modtime
+            , modified=modified
+            , time=modtime
         )
 
 
@@ -182,6 +186,7 @@ class Search:
             sr.tags = r["tags"]
             sr.path = r["path"]
             sr.content = r["content"]
+            sr.modified = r["modified"]
             highlights = r.highlights("content")
             if not highlights:
                 highlights = self.cap(r["content"], 1000)
@@ -206,13 +211,10 @@ class Search:
         with self.ix.searcher() as searcher:
             query_string = " ".join(query_list)
             query = None
+            sortbydate = "sortbydate" in fields
             if "\"" in query_string or ":" in query_string:
                 query = QueryParser("content", self.schema).parse(query_string)
-            elif len(fields) == 1 and fields[0] == "filename":
-                pass
-            elif len(fields) == 1 and fields[0] == "tags":
-                pass
-            elif len(fields) == 2:
+            elif "filename" in fields or "tags" in fields:
                 pass
             else:
                 fields = ["tags", "headlines", "content", "filename", "doubleemphasiswords", "emphasiswords"]
@@ -220,7 +222,10 @@ class Search:
                 query = MultifieldParser(fields, schema=self.ix.schema).parse(query_string)
             parsed_query = "%s" % query
             print "query: %s" % parsed_query
-            results = searcher.search(query, terms=False, scored=True, groupedby="path")
+            if sortbydate:
+                results = searcher.search(query, terms=False, scored=True, groupedby="path", sortedby="modified", reverse=True)
+            else:
+                results = searcher.search(query, terms=False, scored=True, groupedby="path")
             key_terms = results.key_terms("tags", docs=100, numterms=100)
             tag_cloud = [keyword for keyword, score in key_terms]
             search_result = self.create_search_result(results)
