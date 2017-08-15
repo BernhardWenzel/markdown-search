@@ -25,10 +25,14 @@ app = Flask(__name__)
 # Load default config and override config from an environment variable
 app.config.from_pyfile("config.py")
 
-last_searches_file = app.config["INDEX_DIR"] + "/last_searches.txt"
-directories_file = app.config["INDEX_DIR"] + "/directories.txt"
-favourite_searches_file = app.config["INDEX_DIR"] + "/favourite_searches.txt"
-favourite_directories_file = app.config["INDEX_DIR"] + "/favourite_directories.txt"
+index_dir = app.config["INDEX_DIR"]
+settings_dir = app.config["SETTINGS_DIR"]
+if not os.path.exists(settings_dir):
+    os.makedirs(settings_dir)
+last_searches_file = index_dir + "/last_searches.txt"
+directories_file = index_dir + "/directories.txt"
+favourite_searches_file = settings_dir + "/favourite_searches.txt"
+favourite_directories_file = settings_dir + "/favourite_directories.txt"
 
 @app.route('/')
 def index():
@@ -42,7 +46,7 @@ def search():
         fields = []
 
     directories = []
-    search = Search(app.config["INDEX_DIR"])
+    search = Search(index_dir)
     favourite_searches = read_storage(favourite_searches_file)
     favourite_directories = read_storage(favourite_directories_file)
     last_searches=read_storage(last_searches_file)
@@ -65,7 +69,9 @@ def open_file():
     path = request.args['path']
     fields = request.args.get('fields')
     query = request.args['query']
-    call([app.config["EDIT_COMMAND"], path])
+    edit_command = app.config["EDIT_COMMAND"]
+    args = ["open", "-a", edit_command, path]
+    call(args)
 
     return redirect(url_for("search", query=query, fields=fields))
 
@@ -92,7 +98,7 @@ def update_index():
         UpdateIndexTask()
         flash("Updating index, check console output")
     store_directories()
-    return render_template("search.html", query="", fields="", last_searches=get_last_searches())
+    return render_template("search.html", query="", fields="")
 
 
 def read_storage(file):
@@ -127,7 +133,7 @@ def store_directories():
                 if os.path.isdir(os.path.join(root, d)):
                     directories.append("%s\n" % unicode(d.lower(), "utf-8"))
     directories = sorted(set(directories))
-    with codecs.open(app.config["INDEX_DIR"] + "/directories.txt", 'w', encoding='utf-8') as f:
+    with codecs.open(directories_file, 'w', encoding='utf-8') as f:
         f.writelines(directories)
 
 if __name__ == '__main__':

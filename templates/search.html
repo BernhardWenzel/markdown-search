@@ -78,7 +78,7 @@
             <div class="path">
                 <a href='{{ url_for("open_file")}}?path={{e.path|urlencode}}&query={{query}}&fields={{fields}}'>{{e.path}}</a>
                 <a href='{{ url_for("view_file")}}?path={{e.path|urlencode}}&query={{query}}&fields={{fields}}'>view</a>
-                score: {{e.score | string | truncate(8)}} modified: {{ e.modified }}
+                score: {{ e.score | string | truncate(8)}} modified: {{ e.modified }}
             </div>
             <div class="markdown-body">{{ e.content_highlight|safe}}</div>
         </td>
