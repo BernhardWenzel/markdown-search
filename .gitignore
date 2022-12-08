@@ -14,3 +14,5 @@ Scripts/*
 Lib/*
 libs/*
 Include/*
+
+*.ps1
