@@ -197,7 +197,7 @@ class Search:
 
     def get_tags(self):
         with self.ix.searcher() as searcher:
-            return list(searcher.lexicon("tags"))
+            return [byte.decode('utf-8') for byte in list(searcher.lexicon("tags"))]
 
     def search(self, query_list, fields=None):
         with self.ix.searcher() as searcher:
