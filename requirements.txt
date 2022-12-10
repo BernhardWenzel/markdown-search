@@ -1,8 +1,0 @@
-Flask==0.10.1
-Jinja2==2.8
-MarkupSafe==0.23
-Werkzeug==0.10.4
-Whoosh==2.7.0
-itsdangerous==0.24
-mistune==0.7
-wsgiref==0.1.2

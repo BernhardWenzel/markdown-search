@@ -114,7 +114,7 @@ def store_directories():
         if dirnames:
             for d in dirnames:
                 if os.path.isdir(os.path.join(root, d)):
-                    directories.append("%s\n" % unicode(d.lower(), "utf-8"))
+                    directories.append(f"{d.lower()}\n")
     directories = sorted(set(directories))
     with codecs.open(app.config["INDEX_DIR"] + "/directories.txt", 'w', encoding='utf-8') as f:
         f.writelines(directories)

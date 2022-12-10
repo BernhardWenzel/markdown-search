@@ -1,5 +1,6 @@
 import shutil
-import HTMLParser
+import html.parser
+import html
 
 from markdown_parser import MarkdownParser
 import mistune
@@ -20,7 +21,7 @@ class SearchResult:
     tags = ""
 
 
-class DontEscapeHtmlInCodeRenderer(mistune.Renderer):
+class DontEscapeHtmlInCodeRenderer(mistune.HTMLRenderer):
     def __init__(self, **kwargs):
         super(DontEscapeHtmlInCodeRenderer, self).__init__(**kwargs)
 
@@ -36,8 +37,8 @@ class DontEscapeHtmlInCodeRenderer(mistune.Renderer):
 class Search:
     ix = None
     index_folder = None
-    markdown = mistune.Markdown(renderer=DontEscapeHtmlInCodeRenderer(), escape=False)
-    html_parser = HTMLParser.HTMLParser()
+    markdown = mistune.Markdown(renderer=DontEscapeHtmlInCodeRenderer())
+    html_parser = html.parser.HTMLParser()
     schema = None
 
     def __init__(self, index_folder):
@@ -48,7 +49,7 @@ class Search:
         if create_new:
             if os.path.exists(index_folder):
                 shutil.rmtree(index_folder)
-                print "deleted index folder: " + index_folder
+                print("deleted index folder: " + index_folder)
 
         if not os.path.exists(index_folder):
             os.mkdir(index_folder)
@@ -72,19 +73,18 @@ class Search:
             self.ix = index.open_dir(index_folder)
 
     def add_document(self, writer, file_path, config):
-        file_name = unicode(file_path.replace(".", " ").replace("/", " ").replace("\\", " ").replace("_", " ").replace("-", " "), encoding="utf-8")
+        file_name = file_path.replace(".", " ").replace("/", " ").replace("\\", " ").replace("_", " ").replace("-", " ")
         # read file content
         with codecs.open(file_path, 'r', encoding='utf-8') as f:
             content = f.read()
-            path = unicode(file_path, "utf-8")
+            path = file_path
 
         # parse markdown fields
         parser = MarkdownParser()
         parser.parse(content, config)
 
         modtime = os.path.getmtime(path)
-        print "adding to index: path: %s size:%d tags:'%s' headlines:'%s' modtime=%d" % (
-            path, len(content), parser.tags, parser.headlines, modtime)
+        print(f"adding to index: path:{path} size:{len(content)} tags:'{parser.tags}' headlines:'{parser.headlines}' modtime:{modtime}")
         writer.add_document(
             path=path
             , filename=file_name
@@ -110,7 +110,7 @@ class Search:
                     self.add_document(writer, path, config)
                     count += 1
         writer.commit()
-        print "Done, added %d documents to the index" % count
+        print(f"Done, added {count} documents to the index")
 
     def update_index_incremental(self, config, create_new_index=False):
         file_dir = config["MARKDOWN_FILES_DIR"]
@@ -142,7 +142,7 @@ class Search:
                 if not os.path.exists(indexed_path):
                     # This file was deleted since it was indexed
                     writer.delete_by_term('path', indexed_path)
-                    print "removed from index: %s" % indexed_path
+                    print(f"removed from index: {indexed_path}")
 
                 else:
                     # Check if this file was changed since it
@@ -165,7 +165,7 @@ class Search:
 
             writer.commit()
 
-            print "Done, updated %d documents in the index" % count
+            print(f"Done, updated {count} documents in the index")
 
     def create_search_result(self, results):
         # Allow larger fragments
@@ -184,10 +184,8 @@ class Search:
             highlights = r.highlights("content")
             if not highlights:
                 highlights = self.cap(r["content"], 1000)
-            # unescape
-            highlights = self.html_parser.unescape(highlights)
-            html = self.markdown(highlights)
-            sr.content_highlight = html
+            myhtml = self.markdown(highlights)
+            sr.content_highlight = html.unescape(myhtml)
             if "headlines" in r:
                 sr.headlines = r["headlines"]
             search_results.append(sr)
@@ -218,7 +216,7 @@ class Search:
             if not query:
                 query = MultifieldParser(fields, schema=self.ix.schema).parse(query_string)
             parsed_query = "%s" % query
-            print "query: %s" % parsed_query
+            print(f"query: {parsed_query}")
             results = searcher.search(query, terms=False, scored=True, groupedby="path")
             key_terms = results.key_terms("tags", docs=100, numterms=100)
             tag_cloud = [keyword for keyword, score in key_terms]

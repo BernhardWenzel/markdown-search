@@ -4,7 +4,7 @@ import re
 
 # http://mistune.readthedocs.org/en/latest/
 
-class ParsingRenderer(mistune.Renderer):
+class ParsingRenderer(mistune.HTMLRenderer):
     def __init__(self, **kwargs):
         super(ParsingRenderer, self).__init__(**kwargs)
         self.blocks = []
