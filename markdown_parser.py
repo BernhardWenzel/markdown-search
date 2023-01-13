@@ -12,7 +12,7 @@ class ParsingRenderer(mistune.HTMLRenderer):
         self.doubleemphasiswords = u''
         self.emphasiswords = u''
 
-    def block_code(self, code, lang):
+    def block_code(self, code, lang=None):
         self.blocks.append(code)
         return super(ParsingRenderer, self).block_code(code, lang)
 
