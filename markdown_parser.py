@@ -4,7 +4,7 @@ import re
 
 # http://mistune.readthedocs.org/en/latest/
 
-class ParsingRenderer(mistune.Renderer):
+class ParsingRenderer(mistune.HTMLRenderer):
     def __init__(self, **kwargs):
         super(ParsingRenderer, self).__init__(**kwargs)
         self.blocks = []
@@ -12,7 +12,7 @@ class ParsingRenderer(mistune.Renderer):
         self.doubleemphasiswords = u''
         self.emphasiswords = u''
 
-    def block_code(self, code, lang):
+    def block_code(self, code, lang=None):
         self.blocks.append(code)
         return super(ParsingRenderer, self).block_code(code, lang)
 

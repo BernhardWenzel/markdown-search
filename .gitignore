@@ -8,3 +8,11 @@ venv/
 last_searches.txt
 directories.txt
 md-search.sh
+
+pyvenv.cfg
+Scripts/*
+Lib/*
+libs/*
+Include/*
+
+*.ps1
