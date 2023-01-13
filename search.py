@@ -25,7 +25,7 @@ class DontEscapeHtmlInCodeRenderer(mistune.HTMLRenderer):
     def __init__(self, **kwargs):
         super(DontEscapeHtmlInCodeRenderer, self).__init__(**kwargs)
 
-    def block_code(self, code, lang):
+    def block_code(self, code, lang=None):
         if not lang:
             return '<pre><code>%s\n</code></pre>\n' % code
         return '<pre><code class="lang-%s">%s\n</code></pre>\n' % (lang, code)
